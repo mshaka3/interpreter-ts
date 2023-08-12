@@ -1,5 +1,14 @@
-import { Token } from "../types"
-import { ExpressionStatement, Identifier, Node, LetStatement, Program, ReturnStatement, Statement, IntegerLiteral } from "./types"
+import { Token } from '../types'
+import {
+    ExpressionStatement,
+    Identifier,
+    Node,
+    LetStatement,
+    Program,
+    ReturnStatement,
+    Statement,
+    IntegerLiteral
+} from './types'
 
 export function program(): Program {
     var statements: Statement[] = []
@@ -10,11 +19,10 @@ export function program(): Program {
         } else {
             return ''
         }
-
     }
 
     function print() {
-        var out: string[] = []
+        const out: string[] = []
         for (const s of statements) {
             out.push(s.print())
         }
@@ -24,28 +32,28 @@ export function program(): Program {
 
     return {
         type: 'PROGRAM',
-        statements, tokenLiteral,
+        statements,
+        tokenLiteral,
         print,
         token: { type: 'ILLEGAL', literal: 'START_OF_PROGRAM' }
     }
 }
 
 export function letStatement(token: Token, name: Identifier): LetStatement {
-    var value = identifier(token, '')
+    let value = identifier(token, '')
 
     function tokenLiteral() {
         return token.literal
     }
 
     function print() {
-        var out = tokenLiteral() + ' ' + name.print() + " = "
+        let out = tokenLiteral() + ' ' + name.print() + ' = '
 
         if (value != null) {
             out = out + value.print()
         }
 
         return out + ';'
-
     }
 
     return {
@@ -66,14 +74,14 @@ export function letStatement(token: Token, name: Identifier): LetStatement {
 }
 
 export function returnStatement(token: Token): ReturnStatement {
-    var returnValue = expression(token)
+    const returnValue = expression(token)
 
     function tokenLiteral() {
         return token.literal
     }
 
     function print() {
-        var out: string = tokenLiteral() + ' '
+        let out: string = tokenLiteral() + ' '
 
         if (returnValue != null) {
             out = out + returnValue.print()
@@ -89,13 +97,12 @@ export function returnStatement(token: Token): ReturnStatement {
         tokenLiteral,
         print,
         token,
-        returnValue,
+        returnValue
     }
 }
 
-
 export function expressionStatement(token: Token): ExpressionStatement {
-    var exp = expression(token)
+    const exp = expression(token)
 
     function tokenLiteral() {
         return token.literal
@@ -117,7 +124,9 @@ export function expression(token: Token): Node {
         return token.literal
     }
 
-    function print() { return '' }
+    function print() {
+        return ''
+    }
 
     return {
         type: 'EXPRESSION',
@@ -133,7 +142,9 @@ export function identifier(token: Token, value: string): Identifier {
         return token.literal
     }
 
-    function print() { return value }
+    function print() {
+        return value
+    }
 
     return {
         type: 'IDENTIFIER',
@@ -144,12 +155,14 @@ export function identifier(token: Token, value: string): Identifier {
     }
 }
 
-export function integerLiteral(token: Token, value: BigInt): IntegerLiteral {
+export function integerLiteral(token: Token, value: bigint): IntegerLiteral {
     function tokenLiteral(): string {
         return token.literal
     }
 
-    function print() { return String(value) }
+    function print() {
+        return String(value)
+    }
 
     return {
         type: 'INTEGER_LITERAL',

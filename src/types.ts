@@ -1,46 +1,43 @@
 export type Lexer = { getNextToken: () => Token }
 
 export type TokenType =
-    "ILLEGAL" |
-    "EOF" |
+  | 'ILLEGAL'
+  | 'EOF'
 
-    // Identifiers + literals
+  // Identifiers + literals
+  | 'IDENT' // add, foobar, x, y, ...
+  | 'INT' // 1343456
 
-    "IDENT" | // add, foobar, x, y, ...
-    "INT" | // 1343456
+  // Operators
+  | 'ASSIGN'
+  | 'PLUS' // Delimiters
+  | 'MINUS'
+  | 'BANG'
+  | 'ASTERISK'
+  | 'SLASH'
+  | 'LT'
+  | 'GT'
+  | 'COMMA'
+  | 'SEMICOLON'
+  | 'LPAREN'
+  | 'RPAREN'
+  | 'LBRACE'
+  | 'RBRACE'
 
-    // Operators
-    "ASSIGN" |
-    "PLUS" |    // Delimiters
-    "MINUS" |
-    "BANG" |
-    "ASTERISK" |
-    "SLASH" |
-    "LT" |
-    "GT" |
-    "COMMA" |
-    "SEMICOLON" |
-    "LPAREN" |
-    "RPAREN" |
-    "LBRACE" |
-    "RBRACE" |
-
-    // Keywords
-    "FUNCTION" |
-    "LET" |
-    "CONST" |
-    "VAR" |
-    "ELSE" |
-    "IF" |
-    "RETURN" |
-    "TRUE" |
-    "FALSE" |
-    "EQ" |
-    "NEQ"
-
+  // Keywords
+  | 'FUNCTION'
+  | 'LET'
+  | 'CONST'
+  | 'VAR'
+  | 'ELSE'
+  | 'IF'
+  | 'RETURN'
+  | 'TRUE'
+  | 'FALSE'
+  | 'EQ'
+  | 'NEQ'
 
 export interface Token {
-    type: TokenType
-    literal: string
+  type: TokenType
+  literal: string
 }
-

@@ -1,6 +1,17 @@
-import { Lexer, Token, TokenType } from "../types";
-import { expressionStatement, identifier, integerLiteral, letStatement, program, returnStatement } from "./ast";
-import { Expression, Identifier, InfixParseFn, InfixxParsFnMap, OperatorPrecedence, Parser, PrefixParsFnMap, PrefixParseFn, Statement } from "./types";
+import { Lexer, Token, TokenType } from '../types'
+import { expressionStatement, identifier, integerLiteral, letStatement, program, returnStatement } from './ast'
+
+import {
+    Expression,
+    Identifier,
+    InfixParseFn,
+    InfixxParsFnMap,
+    OperatorPrecedence,
+    Parser,
+    PrefixParsFnMap,
+    PrefixParseFn,
+    Statement
+} from './types'
 
 export function parser(lexer: Lexer): Parser {
     var currToken: Token
@@ -38,8 +49,7 @@ export function parser(lexer: Lexer): Parser {
             return parseLetStatement()
         } else if (currToken.type == 'RETURN') {
             return parseReturnStatement()
-        }
-        else {
+        } else {
             return parseExpressionStatement()
         }
     }
@@ -58,7 +68,9 @@ export function parser(lexer: Lexer): Parser {
     function parseExpression(opPrecedence: OperatorPrecedence) {
         var prefix = prefixParseFnsMap.get(currToken.type)
 
-        if (prefix == null) { return null }
+        if (prefix == null) {
+            return null
+        }
 
         return prefix()
     }
@@ -87,13 +99,12 @@ export function parser(lexer: Lexer): Parser {
             return null
         }
 
-        //TODO we skipping  the exression 
+        //TODO we skipping  the exression
         while (currToken.type != 'SEMICOLON') {
             nextToken()
         }
 
         return statement
-
     }
 
     function parseIdentifier(): Identifier {
@@ -140,10 +151,9 @@ export function parser(lexer: Lexer): Parser {
     }
 
     function peekError(tokenType: TokenType) {
-        const msg = `expected next token to be ${tokenType}, got ${peekToken.type} instead`;
+        const msg = `expected next token to be ${tokenType}, got ${peekToken.type} instead`
         errors.push(msg)
     }
 
     return { parseProgram, errors }
 }
-
