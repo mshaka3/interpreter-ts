@@ -1,5 +1,5 @@
 import { MAP_TOKWN_TYPE_LETIERAL } from "../constants"
-import {  TokenType } from "../types"
+import { Token, TokenType } from "./types"
 
 export function lexer(input: string) {
     var readPosition = 0
