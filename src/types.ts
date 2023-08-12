@@ -1,3 +1,5 @@
+export type Lexer = { getNextToken: () => Token }
+
 export type TokenType =
     "ILLEGAL" |
     "EOF" |
