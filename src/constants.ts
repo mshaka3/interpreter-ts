@@ -1,4 +1,5 @@
-import { TokenType } from './lexer/types'
+import { OperatorPrecedence } from './parser/types'
+import { TokenType } from './types'
 
 export const MAP_TOKWN_TYPE_LETIERAL: { [key in string]: TokenType } = {
   EOF: 'EOF',
@@ -32,4 +33,15 @@ export const MAP_TOKWN_TYPE_LETIERAL: { [key in string]: TokenType } = {
 
   '==': 'EQ',
   '!=': 'NEQ'
+}
+
+export const MAP_TOKEN_TYPE_TO_PRECEDENCE: Partial<Record<TokenType, OperatorPrecedence>> = {
+  EQ: OperatorPrecedence.EQUALS,
+  NEQ: OperatorPrecedence.EQUALS,
+  LT: OperatorPrecedence.LESSGREATER,
+  GT: OperatorPrecedence.LESSGREATER,
+  PLUS: OperatorPrecedence.SUM,
+  MINUS: OperatorPrecedence.SUM,
+  SLASH: OperatorPrecedence.PRODUCT,
+  ASTERISK: OperatorPrecedence.PRODUCT
 }
