@@ -2,7 +2,7 @@ import { test, expect } from 'vitest'
 import { lexer } from '../../lexer'
 import { parser } from '..'
 
-import { LetStatement, Statement, isExpressionStatment } from './types'
+import { LetStatement, Statement } from './types'
 import { checkParserErrors } from '../../utils/check-parser-errors'
 
 test('Parsing let statements', () => {

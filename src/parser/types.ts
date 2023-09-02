@@ -20,11 +20,14 @@ export type NodeType =
   | 'LET_STATEMENT'
   | 'RETURN_STATEMENT'
   | 'EXPRESSION_STATEMENT'
+  | 'BLOCK_STATEMENT'
   | 'IDENTIFIER'
   | 'EXPRESSION'
   | 'INTEGER_LITERAL'
+  | 'BOOLEAN_LITERAL'
   | 'PREFIX_EXPRESSION'
   | 'INFIX_EXPRESSION'
+  | 'IF_EXPRESSION'
 
 export interface Node {
   token: Token
@@ -34,8 +37,14 @@ export interface Node {
   print: () => string
 }
 
-export type Statement = LetStatement | ReturnStatement | ExpressionStatement
-export type Expression = Identifier | IntegerLiteral | PrefixExpression | InfixExpression
+export type Statement = LetStatement | ReturnStatement | ExpressionStatement | BlockStatment
+export type Expression =
+  | Identifier
+  | IntegerLiteral
+  | PrefixExpression
+  | InfixExpression
+  | BooleanLiteral
+  | IFExpression
 
 export interface Program extends Node {
   statements: Statement[]
@@ -54,26 +63,38 @@ export interface ExpressionStatement extends Node {
   expression: Expression | null
 }
 
+export interface BlockStatment extends Node {
+  statements: ExpressionStatement[]
+}
+
 export interface Identifier extends Node {
   value: string
 }
-
 export interface IntegerLiteral extends Node {
   value: bigint | null
+}
+export interface BooleanLiteral extends Node {
+  value: boolean
 }
 
 export interface PrefixExpression extends Node {
   operator: string
-  right: Expression | null
+  right: Expression
 }
 
 export interface InfixExpression extends Node {
-  left: Expression | null
+  left: Expression
   operator: string
-  right: Expression | null
+  right: Expression
 }
 
-export type PrefixParseFn = () => Expression
+export interface IFExpression extends Node {
+  condition: Expression
+  consequence: BlockStatment
+  alternative?: BlockStatment
+}
+
+export type PrefixParseFn = () => Expression | null
 export type InfixParseFn = (expression: Expression) => Expression
 
 export type PrefixParsFnMap = Map<TokenType, PrefixParseFn>
@@ -84,6 +105,18 @@ export function isExpressionStatment(value: Statement): value is ExpressionState
   return value.type == 'EXPRESSION_STATEMENT'
 }
 
+export function isInfixExpression(value: Expression): value is InfixExpression {
+  return value.type == 'INFIX_EXPRESSION'
+}
+
 export function isIntegerLiteral(value: Expression): value is IntegerLiteral {
   return value.type == 'INTEGER_LITERAL'
+}
+
+export function isIdentifier(value: Expression): value is Identifier {
+  return value.type == 'IDENTIFIER'
+}
+
+export function isIFExpression(value: Expression): value is IFExpression {
+  return value.type == 'IF_EXPRESSION'
 }
