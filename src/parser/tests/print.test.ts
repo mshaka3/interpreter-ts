@@ -1,5 +1,7 @@
 import { test, expect } from 'vitest'
-import { identifier, letStatement, program } from '../ast'
+import { program } from '../AST'
+import { identifier } from '../AST/expressions'
+import { letStatement } from '../AST/statements'
 
 test('test print method', () => {
   const p = program()

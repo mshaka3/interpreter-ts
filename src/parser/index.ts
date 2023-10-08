@@ -1,18 +1,23 @@
+import { warn } from 'console'
 import { MAP_TOKEN_TYPE_TO_PRECEDENCE } from '../constants'
 import { Lexer, Token, TokenType } from '../types'
+
+import { program } from './AST'
 import {
-  expressionStatement,
+  booleanLiteral,
   identifier,
+  ifExpression,
   infixExpression,
   integerLiteral,
-  letStatement,
-  prefixExpression,
-  program,
-  returnStatement
-} from './ast'
+  prefixExpression
+} from './AST/expressions'
+import { blockStatment, expressionStatement, letStatement, returnStatement } from './AST/statements'
 
 import {
+  BlockStatment,
+  BooleanLiteral,
   Expression,
+  IFExpression,
   Identifier,
   InfixExpression,
   InfixParseFn,
@@ -40,9 +45,16 @@ export function parser(lexer: Lexer): Parser {
 
   registerPrefix('IDENT', parseIdentifier)
   registerPrefix('INT', parseIntegerLiteral)
-
   registerPrefix('MINUS', parsePrefixExpression)
   registerPrefix('BANG', parsePrefixExpression)
+
+  registerPrefix('IF', parseIfExpression)
+
+  registerPrefix('FALSE', parseBoolean)
+  registerPrefix('TRUE', parseBoolean)
+
+  registerPrefix('LPAREN', parseGroupedExpression)
+
   registerInfix('PLUS', parseInfixExpression)
   registerInfix('MINUS', parseInfixExpression)
   registerInfix('SLASH', parseInfixExpression)
@@ -108,6 +120,26 @@ export function parser(lexer: Lexer): Parser {
 
     return statement
   }
+
+  function parseBlockStatement(): BlockStatment {
+    var blockStmt = blockStatment(currToken)
+    blockStmt.statements = []
+
+    nextToken()
+
+    while (currToken.type != 'RBRACE' && currToken.type != 'EOF') {
+      var statement = parseStatement()
+
+      if (statement) {
+        blockStmt.statements.push(statement)
+      }
+
+      nextToken()
+    }
+
+    return blockStmt
+  }
+
   function parseExpressionStatement() {
     const expression = parseExpression(OperatorPrecedence.LOWEST)
     var statement = expressionStatement(currToken, expression)
@@ -144,18 +176,67 @@ export function parser(lexer: Lexer): Parser {
     return leftExpression
   }
 
+  function parseGroupedExpression(): Expression | null {
+    nextToken()
+
+    var expression = parseExpression(OperatorPrecedence.LOWEST)
+
+    if (!expectPeek('RPAREN')) {
+      return null
+    }
+
+    return expression
+  }
+
+  function parseIfExpression(): IFExpression | null {
+    var token = currToken
+
+    if (!expectPeek('LPAREN')) {
+      return null
+    }
+    nextToken()
+
+    var condition = parseExpression(OperatorPrecedence.LOWEST)
+
+    if (!expectPeek('RPAREN')) {
+      return null
+    }
+
+    if (!expectPeek('LBRACE')) {
+      return null
+    }
+
+    var consequnce = parseBlockStatement()
+
+    var alternative
+    if (peekTokenIs('ELSE')) {
+      nextToken()
+
+      if (!expectPeek('LBRACE')) {
+        return null
+      }
+      alternative = parseBlockStatement()
+    }
+
+    return ifExpression(token, condition, consequnce, alternative)
+  }
+
   function parseIdentifier(): Identifier {
     return identifier(currToken, currToken.literal)
   }
 
-  function parseIntegerLiteral(): Expression {
+  function parseBoolean(): BooleanLiteral {
+    return booleanLiteral(currToken, currToken.type == 'TRUE')
+  }
+
+  function parseIntegerLiteral(): Expression | null {
     try {
       var value = BigInt(currToken.literal)
       return integerLiteral(currToken, value)
     } catch (error) {
       console.error(`could not parse ${currToken.literal} as BigInt`)
       errors.push(`could not parse ${currToken.literal} as BigInt`)
-      return integerLiteral(currToken, null)
+      return null
     }
   }
 
