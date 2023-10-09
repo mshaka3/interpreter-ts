@@ -8,7 +8,8 @@ import {
   BooleanLiteral,
   BlockStatment,
   IFExpression,
-  FunctionLiteral
+  FunctionLiteral,
+  CallExperssion
 } from '../types'
 
 export function identifier(token: Token, value: string): Identifier {
@@ -136,4 +137,18 @@ export function functionLiteral(token: Token, parameters: Identifier[], body: Bl
   }
 
   return { type: 'FUNCTION_LITERAL', token, body, parameters, print, tokenLiteral }
+}
+
+export function callExperssion(token: Token, func: Expression, args: Expression[]): CallExperssion {
+  function tokenLiteral() {
+    return token.literal
+  }
+
+  const argsArr = args.reduce((acc, arg) => [...acc, arg.print()], [] as string[])
+
+  function print() {
+    return func.print() + '(' + argsArr.join(', ') + ')'
+  }
+
+  return { type: 'CALL_EXPERSSION', token, tokenLiteral, print, func, args }
 }

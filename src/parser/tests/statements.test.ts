@@ -2,47 +2,50 @@ import { test, expect } from 'vitest'
 import { lexer } from '../../lexer'
 import { parser } from '..'
 
-import { LetStatement, Statement } from '../types'
+import { LetStatement, Statement, isLetStatement } from '../types'
 import { checkParserErrors } from '../../utils/check-parser-errors'
+import { testLiteralExpression } from './expressions/helpers'
 
 test('Parsing let statements', () => {
-  const input = `
-      let x = 5;
-      let y = 10;
-      let foobar = 838383;
-    `
+  const tests = [
+    { input: 'let x = 5;', expectedIdentifier: 'x', expectedValue: 5 },
+    { input: 'let y = true;', expectedIdentifier: 'y', expectedValue: true },
+    { input: 'let foobar = y;', expectedIdentifier: 'foobar', expectedValue: 'y' }
+  ]
 
-  const l = lexer(input)
-  const p = parser(l)
+  for (const test of tests) {
+    const l = lexer(test.input)
+    const p = parser(l)
 
-  const program = p.parseProgram()
-  const errors = p.errors
+    const program = p.parseProgram()
+    const errors = p.errors
+    checkParserErrors(errors)
 
-  expect(checkParserErrors(errors)).toBe(false)
-  expect(program).not.toBeNull()
-  expect(program.statements.length).toBe(3)
+    expect(checkParserErrors(errors)).toBe(false)
+    expect(program).not.toBeNull()
+    expect(program.statements.length).toBe(1)
 
-  const tests = [{ expectedIdentifier: 'x' }, { expectedIdentifier: 'y' }, { expectedIdentifier: 'foobar' }]
-
-  for (let i = 0; i < tests.length; i++) {
-    const tt = tests[i]
-    const stmt = program.statements[i]
-    expect(testLetStatement(stmt, tt.expectedIdentifier)).toBe(true)
+    const stmt = program.statements[0]
+    expect(testLetStatement(stmt, test.expectedIdentifier)).toBe(true)
+    expect(isLetStatement(stmt)).toBe(true)
+    if (isLetStatement(stmt)) {
+      expect(testLiteralExpression(stmt.value, test.expectedValue)).toBe(true)
+    }
   }
 
-  function testLetStatement(s: Statement, name: string): boolean {
+  function testLetStatement(s: Statement, expectedName: string): boolean {
     if (s.tokenLiteral() !== 'let') {
       console.error(`s.tokenLiteral not 'let'. got=${s.tokenLiteral()}`)
       return false
     }
 
     const letStmt = s as LetStatement
-    if (letStmt.name.value !== name) {
-      console.error(`letStmt.name.value not '${name}'. got=${letStmt.name.value}`)
+    if (letStmt.name.value !== expectedName) {
+      console.error(`letStmt.name.value not '${expectedName}'. got=${letStmt.name.value}`)
       return false
     }
 
-    if (letStmt.name.tokenLiteral() !== name) {
+    if (letStmt.name.tokenLiteral() !== expectedName) {
       console.error(`s.name not '${name}'. got=${letStmt.name}`)
       return false
     }

@@ -43,5 +43,6 @@ export const MAP_TOKEN_TYPE_TO_PRECEDENCE: Partial<Record<TokenType, OperatorPre
   PLUS: OperatorPrecedence.SUM,
   MINUS: OperatorPrecedence.SUM,
   SLASH: OperatorPrecedence.PRODUCT,
-  ASTERISK: OperatorPrecedence.PRODUCT
+  ASTERISK: OperatorPrecedence.PRODUCT,
+  LPAREN: OperatorPrecedence.CALL
 }

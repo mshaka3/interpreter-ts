@@ -8,11 +8,8 @@ import {
   BlockStatment,
   Statement
 } from '../types'
-import { identifier } from './expressions'
 
-export function letStatement(token: Token, name: Identifier): LetStatement {
-  var value = identifier(token, '')
-
+export function letStatement(token: Token, name: Identifier, value: Expression): LetStatement {
   function tokenLiteral() {
     return token.literal
   }
@@ -32,19 +29,13 @@ export function letStatement(token: Token, name: Identifier): LetStatement {
 
     tokenLiteral,
     print,
-
-    get value() {
-      return value
-    },
-    set value(newValue) {
-      value = newValue
-    },
+    value,
     token,
     name
   }
 }
 
-export function returnStatement(token: Token, returnValue: Expression | null): ReturnStatement {
+export function returnStatement(token: Token, returnValue: Expression): ReturnStatement {
   function tokenLiteral() {
     return token.literal
   }

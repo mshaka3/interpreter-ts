@@ -5,6 +5,7 @@ import { Lexer, Token, TokenType } from '../types'
 import { program } from './AST'
 import {
   booleanLiteral,
+  callExperssion,
   functionLiteral,
   identifier,
   ifExpression,
@@ -67,6 +68,8 @@ export function parser(lexer: Lexer): Parser {
   registerInfix('LT', parseInfixExpression)
   registerInfix('GT', parseInfixExpression)
 
+  registerInfix('LPAREN', parseCallExpression)
+
   function parseProgram() {
     const programNode = program()
 
@@ -93,15 +96,20 @@ export function parser(lexer: Lexer): Parser {
   }
 
   function parseReturnStatement() {
-    var statement = returnStatement(currToken, null)
-
+    var token = currToken
     nextToken()
 
-    while (currToken.type != 'SEMICOLON') {
+    const returnValue = parseExpression(OperatorPrecedence.LOWEST)
+
+    if (!returnValue) {
+      return null
+    }
+
+    while (peekTokenIs('SEMICOLON')) {
       nextToken()
     }
 
-    return statement
+    return returnStatement(token, returnValue)
   }
 
   function parseLetStatement() {
@@ -110,18 +118,24 @@ export function parser(lexer: Lexer): Parser {
       return null
     }
 
-    var statement = letStatement(token, identifier(currToken, currToken.literal))
+    var name = identifier(currToken, currToken.literal)
 
     if (!expectPeek('ASSIGN')) {
       return null
     }
 
-    //TODO we skipping  the exression
-    while (currToken.type != 'SEMICOLON') {
+    nextToken()
+
+    const value = parseExpression(OperatorPrecedence.LOWEST)
+    if (!value) {
+      return null
+    }
+
+    while (peekTokenIs('SEMICOLON')) {
       nextToken()
     }
 
-    return statement
+    return letStatement(token, name, value)
   }
 
   function parseBlockStatement(): BlockStatment {
@@ -232,6 +246,47 @@ export function parser(lexer: Lexer): Parser {
     }
 
     return expression
+  }
+
+  function parseCallExpression(func: Expression): Expression | null {
+    const token = currToken
+    const args = parseCallArguments()
+
+    if (!args) {
+      return null
+    }
+
+    return callExperssion(token, func, args)
+  }
+
+  function parseCallArguments(): Expression[] | null {
+    if (peekTokenIs('RPAREN')) {
+      nextToken()
+      return []
+    }
+
+    nextToken()
+
+    var argExpression = parseExpression(OperatorPrecedence.LOWEST)
+    if (!argExpression) return null
+
+    var args = [argExpression]
+
+    while (peekTokenIs('COMMA')) {
+      nextToken()
+      nextToken()
+
+      var exp = parseExpression(OperatorPrecedence.LOWEST)
+      if (!exp) return null
+
+      args.push(exp)
+    }
+
+    if (!expectPeek('RPAREN')) {
+      return null
+    }
+
+    return args
   }
 
   function parseIfExpression(): IFExpression | null {

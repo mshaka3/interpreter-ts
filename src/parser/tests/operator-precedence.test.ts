@@ -62,7 +62,17 @@ describe('test operator precedence suite', () => {
       { input: 'true', expected: 'true' },
       { input: 'false', expected: 'false' },
       { input: '3 > 5 == false', expected: '((3 > 5) == false)' },
-      { input: '3 < 5 == true', expected: '((3 < 5) == true)' }
+      { input: '3 < 5 == true', expected: '((3 < 5) == true)' },
+
+      { input: 'a + add(b * c) + d', expected: '((a + add((b * c))) + d)' },
+      {
+        input: 'add(a, b, 1, 2 * 3, 4 + 5, add(6, 7 * 8))',
+        expected: 'add(a, b, 1, (2 * 3), (4 + 5), add(6, (7 * 8)))'
+      },
+      {
+        input: 'add(a + b + c * d / f + g)',
+        expected: 'add((((a + b) + ((c * d) / f)) + g))'
+      }
     ]
 
     for (const test of tests) {

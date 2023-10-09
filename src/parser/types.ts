@@ -29,6 +29,7 @@ export type NodeType =
   | 'INFIX_EXPRESSION'
   | 'IF_EXPRESSION'
   | 'FUNCTION_LITERAL'
+  | 'CALL_EXPERSSION'
 
 export interface Node {
   token: Token
@@ -47,6 +48,7 @@ export type Expression =
   | BooleanLiteral
   | IFExpression
   | FunctionLiteral
+  | CallExperssion
 
 export interface Program extends Node {
   statements: Statement[]
@@ -85,6 +87,11 @@ export interface FunctionLiteral extends Node {
   body: BlockStatment
 }
 
+export interface CallExperssion extends Node {
+  func: Expression
+  args: Expression[]
+}
+
 export interface PrefixExpression extends Node {
   operator: string
   right: Expression
@@ -103,12 +110,17 @@ export interface IFExpression extends Node {
 }
 
 export type PrefixParseFn = () => Expression | null
-export type InfixParseFn = (expression: Expression) => Expression
+export type InfixParseFn = (expression: Expression) => Expression | null
 
 export type PrefixParsFnMap = Map<TokenType, PrefixParseFn>
 export type InfixxParsFnMap = Map<TokenType, InfixParseFn>
 
 // TYPE GUARDS
+
+export function isLetStatement(value: Statement): value is LetStatement {
+  return value.type == 'LET_STATEMENT'
+}
+
 export function isExpressionStatment(value: Statement): value is ExpressionStatement {
   return value.type == 'EXPRESSION_STATEMENT'
 }
@@ -135,4 +147,8 @@ export function isIFExpression(value: Expression): value is IFExpression {
 
 export function isFunctionLiteral(value: Expression): value is FunctionLiteral {
   return value.type == 'FUNCTION_LITERAL'
+}
+
+export function isCallExperssion(value: Expression): value is CallExperssion {
+  return value.type == 'CALL_EXPERSSION'
 }
