@@ -5,6 +5,7 @@ import { Lexer, Token, TokenType } from '../types'
 import { program } from './AST'
 import {
   booleanLiteral,
+  functionLiteral,
   identifier,
   ifExpression,
   infixExpression,
@@ -54,6 +55,8 @@ export function parser(lexer: Lexer): Parser {
   registerPrefix('TRUE', parseBoolean)
 
   registerPrefix('LPAREN', parseGroupedExpression)
+
+  registerPrefix('FUNCTION', parseFunctionLiteral)
 
   registerInfix('PLUS', parseInfixExpression)
   registerInfix('MINUS', parseInfixExpression)
@@ -174,6 +177,49 @@ export function parser(lexer: Lexer): Parser {
     }
 
     return leftExpression
+  }
+
+  function parseFunctionLiteral(): Expression | null {
+    var token = currToken
+
+    if (!expectPeek('LPAREN')) {
+      return null
+    }
+
+    const parameters = parseFucntionParameters()
+
+    console.log(peekToken)
+    if (!expectPeek('LBRACE') || !parameters) {
+      return null
+    }
+
+    const body = parseBlockStatement()
+
+    return functionLiteral(token, parameters, body)
+  }
+
+  function parseFucntionParameters(): Identifier[] | null {
+    if (peekTokenIs('RPAREN')) {
+      nextToken()
+      return []
+    }
+
+    nextToken()
+
+    const identifiers = []
+    identifiers.push(identifier(currToken, currToken.literal))
+
+    while (peekTokenIs('COMMA')) {
+      nextToken()
+      nextToken()
+      identifiers.push(identifier(currToken, currToken.literal))
+    }
+
+    if (!expectPeek('RPAREN')) {
+      return null
+    }
+
+    return identifiers
   }
 
   function parseGroupedExpression(): Expression | null {

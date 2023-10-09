@@ -5,7 +5,7 @@ import { parser } from '../..'
 
 import { checkParserErrors } from '../../../utils/check-parser-errors'
 
-import { PrefixExpression, isExpressionStatment } from '../../types'
+import { isExpressionStatment } from '../../types'
 import { testIntegerLiteral, testIdentifier } from './helpers'
 
 test('test indentifer expression', () => {

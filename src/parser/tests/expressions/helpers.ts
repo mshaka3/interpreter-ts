@@ -1,24 +1,32 @@
-import { Expression, isIdentifier, isInfixExpression, isIntegerLiteral } from '../../types'
+import { Expression, isBooleanLiteral, isIdentifier, isInfixExpression, isIntegerLiteral } from '../../types'
 
-function testLiteralExpression(expression: Expression, value: string | number): boolean {
-  return typeof value == 'number' ? testIntegerLiteral(expression, BigInt(value)) : testIdentifier(expression, value)
+export function testLiteralExpression(expression: Expression, value: string | number | boolean): boolean {
+  return typeof value == 'number'
+    ? testIntegerLiteral(expression, BigInt(value))
+    : typeof value == 'boolean'
+    ? testBooleanLiteral(expression, value)
+    : testIdentifier(expression, value)
 }
 
 export function testIdentifier(expression: Expression | null, value: string): boolean {
   if (!expression) return false
 
-  if (!isIdentifier(expression)) {
+  if (!isIdentifier(expression) || expression.value != value) {
     return false
-  } else if (expression.value != value) return false
+  }
 
   return true
 }
-export function testIntegerLiteral(expression: Expression | null, value: bigint): boolean {
-  if (!expression) return false
 
-  if (!isIntegerLiteral(expression)) {
+export function testIntegerLiteral(expression: Expression | null, value: bigint): boolean {
+  if (!expression || !isIntegerLiteral(expression) || expression.value != value) {
     return false
-  } else if (expression.value != value) {
+  }
+
+  return true
+}
+export function testBooleanLiteral(expression: Expression, value: boolean): boolean {
+  if (!expression || !isBooleanLiteral(expression) || expression.value != value) {
     return false
   }
 
@@ -28,8 +36,8 @@ export function testIntegerLiteral(expression: Expression | null, value: bigint)
 export function testInfixExpression(
   expression: Expression,
   operator: string,
-  leftValue: number | string,
-  rightValue: number | string
+  leftValue: number | string | boolean,
+  rightValue: number | string | boolean
 ): boolean {
   if (!isInfixExpression(expression)) {
     return false

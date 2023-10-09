@@ -28,6 +28,7 @@ export type NodeType =
   | 'PREFIX_EXPRESSION'
   | 'INFIX_EXPRESSION'
   | 'IF_EXPRESSION'
+  | 'FUNCTION_LITERAL'
 
 export interface Node {
   token: Token
@@ -45,6 +46,7 @@ export type Expression =
   | InfixExpression
   | BooleanLiteral
   | IFExpression
+  | FunctionLiteral
 
 export interface Program extends Node {
   statements: Statement[]
@@ -64,17 +66,23 @@ export interface ExpressionStatement extends Node {
 }
 
 export interface BlockStatment extends Node {
-  statements: ExpressionStatement[]
+  statements: Statement[]
 }
 
 export interface Identifier extends Node {
   value: string
 }
+
 export interface IntegerLiteral extends Node {
   value: bigint | null
 }
 export interface BooleanLiteral extends Node {
   value: boolean
+}
+
+export interface FunctionLiteral extends Node {
+  parameters: Identifier[]
+  body: BlockStatment
 }
 
 export interface PrefixExpression extends Node {
@@ -113,10 +121,18 @@ export function isIntegerLiteral(value: Expression): value is IntegerLiteral {
   return value.type == 'INTEGER_LITERAL'
 }
 
+export function isBooleanLiteral(value: Expression): value is BooleanLiteral {
+  return value.type == 'BOOLEAN_LITERAL'
+}
+
 export function isIdentifier(value: Expression): value is Identifier {
   return value.type == 'IDENTIFIER'
 }
 
 export function isIFExpression(value: Expression): value is IFExpression {
   return value.type == 'IF_EXPRESSION'
+}
+
+export function isFunctionLiteral(value: Expression): value is FunctionLiteral {
+  return value.type == 'FUNCTION_LITERAL'
 }

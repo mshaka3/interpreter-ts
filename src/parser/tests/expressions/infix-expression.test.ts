@@ -17,7 +17,10 @@ test('test parse infix expression', () => {
     { input: '5 > 5;', leftValue: 5, operator: '>', rightValue: 5 },
     { input: '5 < 5;', leftValue: 5, operator: '<', rightValue: 5 },
     { input: '5 == 5;', leftValue: 5, operator: '==', rightValue: 5 },
-    { input: '5 != 5;', leftValue: 5, operator: '!=', rightValue: 5 }
+    { input: '5 != 5;', leftValue: 5, operator: '!=', rightValue: 5 },
+
+    { input: 'true == true', leftValue: true, operator: '==', rightValue: true },
+    { input: 'true != false', leftValue: true, operator: '!=', rightValue: false }
   ]
 
   for (const test of infixTests) {
@@ -36,7 +39,7 @@ test('test parse infix expression', () => {
       expect(statement.expression).not.toBeNull()
 
       if (statement.expression) {
-        testInfixExpression(statement.expression, test.operator, test.leftValue, test.rightValue)
+        expect(testInfixExpression(statement.expression, test.operator, test.leftValue, test.rightValue)).toBe(true)
       }
     }
   }

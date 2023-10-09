@@ -57,7 +57,12 @@ describe('test operator precedence suite', () => {
       {
         input: '3 + 4 * 5 == 3 * 1 + 4 * 5',
         expected: '((3 + (4 * 5)) == ((3 * 1) + (4 * 5)))'
-      }
+      },
+
+      { input: 'true', expected: 'true' },
+      { input: 'false', expected: 'false' },
+      { input: '3 > 5 == false', expected: '((3 > 5) == false)' },
+      { input: '3 < 5 == true', expected: '((3 < 5) == true)' }
     ]
 
     for (const test of tests) {

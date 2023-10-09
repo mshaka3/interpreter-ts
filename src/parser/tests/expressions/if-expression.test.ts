@@ -35,7 +35,10 @@ test('test if expression', () => {
 
         const consequenceStatement = consequence.statements[0]
         expect(consequenceStatement.type == 'EXPRESSION_STATEMENT').toBe(true)
-        expect(testIdentifier(consequenceStatement.expression, 'x')).toBe(true)
+
+        if (isExpressionStatment(consequenceStatement)) {
+          expect(testIdentifier(consequenceStatement.expression, 'x')).toBe(true)
+        }
 
         expect(expression.alternative).toBe(undefined)
       }
@@ -69,7 +72,10 @@ test('test if else expression', () => {
 
         const consequenceStatement = consequence.statements[0]
         expect(consequenceStatement.type == 'EXPRESSION_STATEMENT').toBe(true)
-        expect(testIdentifier(consequenceStatement.expression, 'x')).toBe(true)
+
+        if (isExpressionStatment(consequenceStatement)) {
+          expect(testIdentifier(consequenceStatement.expression, 'x')).toBe(true)
+        }
 
         expect(expression.alternative).not.toBeNull()
       }

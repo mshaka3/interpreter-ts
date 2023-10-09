@@ -5,8 +5,8 @@ import {
   LetStatement,
   ReturnStatement,
   Expression,
-  Statement,
-  BlockStatment
+  BlockStatment,
+  Statement
 } from '../types'
 import { identifier } from './expressions'
 
@@ -87,7 +87,7 @@ export function expressionStatement(token: Token, expression: Expression | null)
 }
 
 export function blockStatment(token: Token): BlockStatment {
-  var statements: ExpressionStatement[] = []
+  var statements: Statement[] = []
 
   function tokenLiteral() {
     return token.literal

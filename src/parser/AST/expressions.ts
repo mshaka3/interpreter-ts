@@ -7,7 +7,8 @@ import {
   InfixExpression,
   BooleanLiteral,
   BlockStatment,
-  IFExpression
+  IFExpression,
+  FunctionLiteral
 } from '../types'
 
 export function identifier(token: Token, value: string): Identifier {
@@ -123,4 +124,16 @@ export function ifExpression(
   }
 
   return { type: 'IF_EXPRESSION', tokenLiteral, token, print, condition, consequence, alternative }
+}
+
+export function functionLiteral(token: Token, parameters: Identifier[], body: BlockStatment): FunctionLiteral {
+  function tokenLiteral() {
+    return token.literal
+  }
+
+  function print() {
+    return tokenLiteral() + '(' + parameters.reduce((str, p) => (str += p.value), '') + ')' + body.print()
+  }
+
+  return { type: 'FUNCTION_LITERAL', token, body, parameters, print, tokenLiteral }
 }

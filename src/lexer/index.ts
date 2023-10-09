@@ -90,6 +90,7 @@ export function lexer(input: string) {
     const charCode = char.charCodeAt(0)
     return '0'.charCodeAt(0) <= charCode && '9'.charCodeAt(0) >= charCode
   }
+
   function createToken(tokenType: TokenType, tokenLiteral: string) {
     return { type: tokenType, literal: tokenLiteral }
   }
