@@ -1,4 +1,3 @@
-import { warn } from 'console'
 import { MAP_TOKEN_TYPE_TO_PRECEDENCE } from '../constants'
 import { Lexer, Token, TokenType } from '../types'
 
@@ -181,7 +180,7 @@ export function parser(lexer: Lexer): Parser {
     while (!peekTokenIs('SEMICOLON') && precedence < peekPrecedence()) {
       var infix = infixParseFnsMap.get(peekToken.type)
 
-      if (!infix) {
+      if (!infix || !leftExpression) {
         return leftExpression
       }
 
@@ -299,6 +298,10 @@ export function parser(lexer: Lexer): Parser {
 
     var condition = parseExpression(OperatorPrecedence.LOWEST)
 
+    if (!condition) {
+      return null
+    }
+
     if (!expectPeek('RPAREN')) {
       return null
     }
@@ -341,21 +344,30 @@ export function parser(lexer: Lexer): Parser {
     }
   }
 
-  function parsePrefixExpression(): PrefixExpression {
+  function parsePrefixExpression(): PrefixExpression | null {
     var token = currToken
 
     nextToken()
 
-    return prefixExpression({ token, operator: token.literal, right: parseExpression(OperatorPrecedence.PREFIX) })
+    const right = parseExpression(OperatorPrecedence.PREFIX)
+
+    if (!right) {
+      return null
+    }
+
+    return prefixExpression({ token, operator: token.literal, right })
   }
 
-  function parseInfixExpression(leftExpression: Expression): InfixExpression {
+  function parseInfixExpression(leftExpression: Expression): InfixExpression | null {
     const token = currToken
     const precedence = currPrecedence()
 
     nextToken()
 
     const rightExpression = parseExpression(precedence)
+    if (!rightExpression) {
+      return null
+    }
 
     return infixExpression({ token, operator: token.literal, left: leftExpression, right: rightExpression })
   }
