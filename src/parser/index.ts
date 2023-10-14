@@ -138,8 +138,8 @@ export function parser(lexer: Lexer): Parser {
   }
 
   function parseBlockStatement(): BlockStatment {
-    var blockStmt = blockStatment(currToken)
-    blockStmt.statements = []
+    var token = currToken
+    var statements: Statement[] = []
 
     nextToken()
 
@@ -147,17 +147,21 @@ export function parser(lexer: Lexer): Parser {
       var statement = parseStatement()
 
       if (statement) {
-        blockStmt.statements.push(statement)
+        statements.push(statement)
       }
 
       nextToken()
     }
 
-    return blockStmt
+    return blockStatment(token, statements)
   }
 
   function parseExpressionStatement() {
     const expression = parseExpression(OperatorPrecedence.LOWEST)
+    if (!expression) {
+      return null
+    }
+
     var statement = expressionStatement(currToken, expression)
 
     if (peekTokenIs('SEMICOLON')) {
@@ -201,7 +205,6 @@ export function parser(lexer: Lexer): Parser {
 
     const parameters = parseFucntionParameters()
 
-    console.log(peekToken)
     if (!expectPeek('LBRACE') || !parameters) {
       return null
     }

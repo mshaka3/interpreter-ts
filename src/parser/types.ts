@@ -60,11 +60,11 @@ export interface LetStatement extends Node {
 }
 
 export interface ReturnStatement extends Node {
-  returnValue: Expression | null
+  returnValue: Expression
 }
 
 export interface ExpressionStatement extends Node {
-  expression: Expression | null
+  expression: Expression
 }
 
 export interface BlockStatment extends Node {
@@ -76,7 +76,7 @@ export interface Identifier extends Node {
 }
 
 export interface IntegerLiteral extends Node {
-  value: bigint | null
+  value: bigint
 }
 export interface BooleanLiteral extends Node {
   value: boolean
@@ -117,12 +117,53 @@ export type InfixxParsFnMap = Map<TokenType, InfixParseFn>
 
 // TYPE GUARDS
 
+export function isProgram(value: Node): value is Program {
+  return value.type == 'PROGRAM'
+}
+// ---  STATEMENTS  --- //
+
+export function isStatement(value: Node): value is Statement {
+  return (
+    value.type == 'LET_STATEMENT' ||
+    value.type == 'RETURN_STATEMENT' ||
+    value.type == 'EXPRESSION_STATEMENT' ||
+    value.type == 'BLOCK_STATEMENT'
+  )
+}
+
 export function isLetStatement(value: Statement): value is LetStatement {
   return value.type == 'LET_STATEMENT'
 }
 
+export function isReturnStatement(value: Statement): value is ReturnStatement {
+  return value.type == 'RETURN_STATEMENT'
+}
+
 export function isExpressionStatment(value: Statement): value is ExpressionStatement {
   return value.type == 'EXPRESSION_STATEMENT'
+}
+
+export function isBlockStatment(value: Statement): value is BlockStatment {
+  return value.type == 'BLOCK_STATEMENT'
+}
+
+// --- EXPRESSIONS --- //
+
+export function isExpression(value: Node): value is Expression {
+  return (
+    value.type == 'PREFIX_EXPRESSION' ||
+    value.type == 'INFIX_EXPRESSION' ||
+    value.type == 'INTEGER_LITERAL' ||
+    value.type == 'BOOLEAN_LITERAL' ||
+    value.type == 'IDENTIFIER' ||
+    value.type == 'IF_EXPRESSION' ||
+    value.type == 'FUNCTION_LITERAL' ||
+    value.type == 'CALL_EXPERSSION'
+  )
+}
+
+export function isPrefixExpression(value: Expression): value is PrefixExpression {
+  return value.type == 'PREFIX_EXPRESSION'
 }
 
 export function isInfixExpression(value: Expression): value is InfixExpression {

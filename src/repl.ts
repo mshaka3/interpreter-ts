@@ -2,6 +2,8 @@ import * as readline from 'readline'
 
 import { lexer } from './lexer'
 import { parser } from './parser'
+import { evaluate } from './eval'
+import { NewEnvireonment } from './eval/values/envireonment'
 
 function start() {
   const rl = readline.createInterface({
@@ -16,11 +18,18 @@ function start() {
     const l = lexer(line)
     const p = parser(l)
     const program = p.parseProgram()
+    const env = NewEnvireonment()
+
     if (p.errors.length > 0) {
       printParserErrors(p.errors)
       return
     }
-    console.log(program.print())
+
+    const evaluated = evaluate(program, env)
+    if (evaluated) {
+      console.log(evaluated.inspect())
+    }
+
     console.log('\n')
     rl.prompt()
   })
@@ -31,13 +40,13 @@ function start() {
 }
 
 const MONKEY_FACE = ` 
-          __,__
- .--.  .-"     "-. .--.
-/ .. \/  .-. .-. \/ .. \
-| | '| /    Y   \ |'  | |
-| \   \ \ 0 | 0 / /   / |
- \ '- ,\.-"""""""-./, -'/
-  ''-' /_   ^ ^  _\ '-''
+           __,__
+  .--.  .-"     "-. .--.
+ / .. \/ .-.  .-.  \/ .. \
+| | '| /     Y    \ |'  | |
+| \   \ \ 0  | 0 / /   / |
+ \ '- ,\.-"""""""-./,-' /
+  ''-' /_   ^ ^   _\ '-''
        |  \._ _./  |
        \  \ '~' /  /
         '._'-=-' _.'

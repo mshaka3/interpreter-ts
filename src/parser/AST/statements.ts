@@ -41,15 +41,7 @@ export function returnStatement(token: Token, returnValue: Expression): ReturnSt
   }
 
   function print() {
-    let out: string = tokenLiteral() + ' '
-
-    if (returnValue != null) {
-      out = out + returnValue.print()
-    }
-
-    out = out + ';'
-
-    return out
+    return tokenLiteral() + ' ' + returnValue.print() + ';'
   }
 
   return {
@@ -61,7 +53,7 @@ export function returnStatement(token: Token, returnValue: Expression): ReturnSt
   }
 }
 
-export function expressionStatement(token: Token, expression: Expression | null): ExpressionStatement {
+export function expressionStatement(token: Token, expression: Expression): ExpressionStatement {
   function tokenLiteral() {
     return token.literal
   }
@@ -77,9 +69,7 @@ export function expressionStatement(token: Token, expression: Expression | null)
   return { type: 'EXPRESSION_STATEMENT', token, expression, tokenLiteral, print }
 }
 
-export function blockStatment(token: Token): BlockStatment {
-  var statements: Statement[] = []
-
+export function blockStatment(token: Token, statements: Statement[]): BlockStatment {
   function tokenLiteral() {
     return token.literal
   }
