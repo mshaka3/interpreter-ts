@@ -1,7 +1,8 @@
 import { nativeBoolToBooleanValue } from '../../utils/native-bool-to-boolean'
-import { IntegerValue, Value, isBooleanValue, isIntegerValue } from '../types'
+import { IntegerValue, StringValue, Value, isBooleanValue, isIntegerValue, isStringValue } from '../types'
 import { Error } from '../values/error'
 import { Integer } from '../values/integer'
+import { String } from '../values/string-value'
 
 export function evalInfixExpression(operator: string, left: Value, right: Value): Value {
   if (isIntegerValue(left) && isIntegerValue(right)) {
@@ -17,11 +18,23 @@ export function evalInfixExpression(operator: string, left: Value, right: Value)
     }
   }
 
+  if (isStringValue(left) && isStringValue(right)) {
+    return evalStringInfixExpression(operator, left, right)
+  }
+
   if (left.type() != right.type()) {
     return Error(`type mismatch: ${left.type()} ${operator} ${right.type()}`)
   }
 
   return Error(`unknown operator: ${left.type()} ${operator} ${right.type()}`)
+}
+
+function evalStringInfixExpression(operator: string, left: StringValue, right: StringValue): Value {
+  if (operator != '+') {
+    return Error(`unknown operator: ${left.type()} ${operator} ${right.type()}`)
+  }
+
+  return String(left.value + right.value)
 }
 
 function evalIntegerInfixExpression(operator: string, left: IntegerValue, right: IntegerValue): Value {

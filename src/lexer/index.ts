@@ -1,5 +1,6 @@
 import { MAP_TOKWN_TYPE_LETIERAL } from '../constants'
-import { Token, TokenType } from '../types'
+import { createToken, readLetter, readNumber, skipWhiteSpace } from './helpers'
+import { Token } from './types'
 
 export function lexer(input: string) {
   var readPosition = 0
@@ -25,17 +26,26 @@ export function lexer(input: string) {
 
       readChar()
     } else {
-      if (readLetter(char)) {
+      if (char == '"') {
+        const startPosition = postion + 1
+        while (true) {
+          readChar()
+          if (char == '"' || char == '\0') {
+            break
+          }
+        }
+        token = createToken('STRING', input.slice(startPosition, postion))
+        readChar()
+      } else if (readLetter(char)) {
         const currPosition = postion
         while (readLetter(char)) {
           readChar()
         }
 
         const word = input.slice(currPosition, postion)
-        token =
-          word in MAP_TOKWN_TYPE_LETIERAL
-            ? createToken(MAP_TOKWN_TYPE_LETIERAL[word], word)
-            : createToken('IDENT', word)
+        const tokenKey = word in MAP_TOKWN_TYPE_LETIERAL ? MAP_TOKWN_TYPE_LETIERAL[word] : 'IDENT'
+
+        token = createToken(tokenKey, word)
       } else if (readNumber(char)) {
         const currPosition = postion
         while (readNumber(char)) {
@@ -75,27 +85,5 @@ export function lexer(input: string) {
 
   return {
     getNextToken
-  }
-
-  function readLetter(char: string): boolean {
-    const charCode = char.charCodeAt(0)
-    return (
-      ('a'.charCodeAt(0) < charCode && 'z'.charCodeAt(0) >= charCode) ||
-      ('A'.charCodeAt(0) <= charCode && 'z'.charCodeAt(0) >= charCode) ||
-      charCode === '_'.charCodeAt(0)
-    )
-  }
-
-  function readNumber(char: string): boolean {
-    const charCode = char.charCodeAt(0)
-    return '0'.charCodeAt(0) <= charCode && '9'.charCodeAt(0) >= charCode
-  }
-
-  function createToken(tokenType: TokenType, tokenLiteral: string) {
-    return { type: tokenType, literal: tokenLiteral }
-  }
-
-  function skipWhiteSpace(char: string): boolean {
-    return [' ', '\t', '\n', '\r'].includes(char)
   }
 }

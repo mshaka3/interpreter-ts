@@ -1,6 +1,14 @@
 import { BlockStatment, Identifier } from '../parser/types'
 
-export type ValueType = 'INTEGER' | 'BOOLEAN' | 'RETURN_VALUE' | 'NULL' | 'ERROR_VALUE' | 'FUNCTION_VALUE'
+export type ValueType =
+  | 'INTEGER'
+  | 'BOOLEAN'
+  | 'STRING'
+  | 'RETURN_VALUE'
+  | 'NULL'
+  | 'ERROR_VALUE'
+  | 'FUNCTION_VALUE'
+  | 'BUILTIN_VALUE'
 
 export interface Value {
   type: () => ValueType
@@ -15,6 +23,10 @@ export interface BooleanValue extends Value {
   value: boolean
 }
 
+export interface StringValue extends Value {
+  value: string
+}
+
 export interface NullValue extends Value {}
 
 export interface ReturnValue extends Value {
@@ -23,6 +35,10 @@ export interface ReturnValue extends Value {
 
 export interface ErrorValue extends Value {
   message: string
+}
+
+export interface BuiltinValue extends Value {
+  fn: BuiltinFunction
 }
 
 export interface FunctionValue extends Value {
@@ -38,6 +54,7 @@ export interface EnvireonmentObject {
   set: (name: string, value: Value) => void
 }
 
+export type BuiltinFunction = (args: Value[]) => Value
 export type MonkeyValue = IntegerValue | BooleanValue | ReturnValue | NullValue | ErrorValue
 
 // TYPE GUARDS
@@ -48,6 +65,10 @@ export function isIntegerValue(value: Value): value is IntegerValue {
 
 export function isBooleanValue(value: Value): value is BooleanValue {
   return value.type() == 'BOOLEAN'
+}
+
+export function isStringValue(value: Value): value is StringValue {
+  return value.type() == 'STRING'
 }
 
 export function isReturnValue(value: Value): value is ReturnValue {
@@ -64,4 +85,8 @@ export function isErrorValue(value: Value): value is ErrorValue {
 
 export function isFunctionValue(value: Value): value is FunctionValue {
   return value.type() == 'FUNCTION_VALUE'
+}
+
+export function isBuiltinValue(value: Value): value is BuiltinValue {
+  return value.type() == 'BUILTIN_VALUE'
 }

@@ -1,4 +1,4 @@
-import { Token, TokenType } from '../types'
+import { Token, TokenType } from '../lexer/types'
 
 export enum OperatorPrecedence {
   LOWEST,
@@ -23,6 +23,7 @@ export type NodeType =
   | 'BLOCK_STATEMENT'
   | 'IDENTIFIER'
   | 'EXPRESSION'
+  | 'STRING_LITERAL'
   | 'INTEGER_LITERAL'
   | 'BOOLEAN_LITERAL'
   | 'PREFIX_EXPRESSION'
@@ -45,6 +46,7 @@ export type Expression =
   | IntegerLiteral
   | PrefixExpression
   | InfixExpression
+  | StringLiteral
   | BooleanLiteral
   | IFExpression
   | FunctionLiteral
@@ -72,6 +74,10 @@ export interface BlockStatment extends Node {
 }
 
 export interface Identifier extends Node {
+  value: string
+}
+
+export interface StringLiteral extends Node {
   value: string
 }
 
@@ -153,6 +159,7 @@ export function isExpression(value: Node): value is Expression {
   return (
     value.type == 'PREFIX_EXPRESSION' ||
     value.type == 'INFIX_EXPRESSION' ||
+    value.type == 'STRING_LITERAL' ||
     value.type == 'INTEGER_LITERAL' ||
     value.type == 'BOOLEAN_LITERAL' ||
     value.type == 'IDENTIFIER' ||
@@ -168,6 +175,10 @@ export function isPrefixExpression(value: Expression): value is PrefixExpression
 
 export function isInfixExpression(value: Expression): value is InfixExpression {
   return value.type == 'INFIX_EXPRESSION'
+}
+
+export function isStringLiteral(value: Expression): value is StringLiteral {
+  return value.type == 'STRING_LITERAL'
 }
 
 export function isIntegerLiteral(value: Expression): value is IntegerLiteral {

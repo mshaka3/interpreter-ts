@@ -1,4 +1,4 @@
-import { Token } from '../../types'
+import { Token } from '../../lexer/types'
 import {
   ExpressionStatement,
   Identifier,

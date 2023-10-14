@@ -7,6 +7,7 @@ export type TokenType =
   // Identifiers + literals
   | 'IDENT' // add, foobar, x, y, ...
   | 'INT' // 1343456
+  | 'STRING' // str values
 
   // Operators
   | 'ASSIGN'

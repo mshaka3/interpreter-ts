@@ -1,4 +1,4 @@
-import { FALSE, TRUE } from '../../constants'
+import { FALSE, TRUE } from '../constants'
 import { Value, isBooleanValue, isIntegerValue, isNullValue } from '../types'
 import { Error } from '../values/error'
 import { Integer } from '../values/integer'

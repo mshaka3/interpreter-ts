@@ -19,7 +19,6 @@ export function testIdentifier(expression: Expression | null, value: string): bo
 }
 
 export function testIntegerLiteral(expression: Expression | null, value: bigint): boolean {
-  console.log(expression, value)
   if (!expression || !isIntegerLiteral(expression) || expression.value != value) {
     return false
   }

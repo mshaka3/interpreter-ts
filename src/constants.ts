@@ -1,8 +1,5 @@
 import { OperatorPrecedence } from './parser/types'
-import { TokenType } from './types'
-
-import { Boolean } from './eval/values/boolean'
-import { Null } from './eval/values/null'
+import { TokenType } from './lexer/types'
 
 export const MAP_TOKWN_TYPE_LETIERAL: { [key in string]: TokenType } = {
   EOF: 'EOF',
@@ -49,7 +46,3 @@ export const MAP_TOKEN_TYPE_TO_PRECEDENCE: Partial<Record<TokenType, OperatorPre
   ASTERISK: OperatorPrecedence.PRODUCT,
   LPAREN: OperatorPrecedence.CALL
 }
-
-export const NULL = Null()
-export const TRUE = Boolean(true)
-export const FALSE = Boolean(false)

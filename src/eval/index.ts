@@ -1,4 +1,4 @@
-import { NULL } from '../constants'
+import { NULL } from './constants'
 import {
   Node,
   isBlockStatment,
@@ -15,7 +15,8 @@ import {
   isPrefixExpression,
   isProgram,
   isReturnStatement,
-  isStatement
+  isStatement,
+  isStringLiteral
 } from '../parser/types'
 import { nativeBoolToBooleanValue } from '../utils/native-bool-to-boolean'
 import { evalBlockStatement } from './eval-fn/eval-block-statements'
@@ -31,6 +32,7 @@ import { EnvireonmentObject, Value, isErrorValue } from './types'
 import { Function } from './values/function'
 import { Integer } from './values/integer'
 import { ReturnValue } from './values/return-value'
+import { String } from './values/string-value'
 
 export function evaluate(node: Node, env: EnvireonmentObject): Value {
   if (isProgram(node)) {
@@ -95,7 +97,7 @@ export function evaluate(node: Node, env: EnvireonmentObject): Value {
     }
 
     if (isIFExpression(node)) {
-      return evalIfExpression(node)
+      return evalIfExpression(node, env)
     }
 
     if (isIdentifier(node)) {
@@ -104,6 +106,10 @@ export function evaluate(node: Node, env: EnvireonmentObject): Value {
 
     if (isIntegerLiteral(node)) {
       return Integer(node.value)
+    }
+
+    if (isStringLiteral(node)) {
+      return String(node.value)
     }
 
     if (isBooleanLiteral(node)) {

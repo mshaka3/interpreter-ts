@@ -1,5 +1,5 @@
 import { MAP_TOKEN_TYPE_TO_PRECEDENCE } from '../constants'
-import { Lexer, Token, TokenType } from '../types'
+import { Lexer, Token, TokenType } from '../lexer/types'
 
 import { program } from './AST'
 import {
@@ -10,7 +10,8 @@ import {
   ifExpression,
   infixExpression,
   integerLiteral,
-  prefixExpression
+  prefixExpression,
+  stringLiteral
 } from './AST/expressions'
 import { blockStatment, expressionStatement, letStatement, returnStatement } from './AST/statements'
 
@@ -28,7 +29,8 @@ import {
   PrefixExpression,
   PrefixParsFnMap,
   PrefixParseFn,
-  Statement
+  Statement,
+  StringLiteral
 } from './types'
 
 export function parser(lexer: Lexer): Parser {
@@ -46,6 +48,8 @@ export function parser(lexer: Lexer): Parser {
 
   registerPrefix('IDENT', parseIdentifier)
   registerPrefix('INT', parseIntegerLiteral)
+  registerPrefix('STRING', parseStringLiteral)
+
   registerPrefix('MINUS', parsePrefixExpression)
   registerPrefix('BANG', parsePrefixExpression)
 
@@ -326,6 +330,10 @@ export function parser(lexer: Lexer): Parser {
     }
 
     return ifExpression(token, condition, consequnce, alternative)
+  }
+
+  function parseStringLiteral(): StringLiteral {
+    return stringLiteral(currToken, currToken.literal)
   }
 
   function parseIdentifier(): Identifier {

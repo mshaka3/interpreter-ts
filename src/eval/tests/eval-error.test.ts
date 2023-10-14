@@ -35,6 +35,10 @@ test('test error handling', () => {
     {
       input: 'foobar',
       expected: 'identifier not found: foobar'
+    },
+    {
+      input: '"Hello" - "World"',
+      expected: 'unknown operator: STRING - STRING'
     }
   ]
 

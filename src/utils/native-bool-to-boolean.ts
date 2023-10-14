@@ -1,4 +1,4 @@
-import { FALSE, TRUE } from '../constants'
+import { FALSE, TRUE } from '../eval/constants'
 import { BooleanValue } from '../eval/types'
 
 export function nativeBoolToBooleanValue(input: boolean): BooleanValue {

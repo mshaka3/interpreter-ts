@@ -1,17 +1,20 @@
 import { evaluate } from '..'
-import { EnvireonmentObject, FunctionValue, Value, isFunctionValue, isReturnValue } from '../types'
+import { EnvireonmentObject, FunctionValue, Value, isBuiltinValue, isFunctionValue, isReturnValue } from '../types'
 import { NewEnvireonment } from '../values/envireonment'
 import { Error } from '../values/error'
 
 export function evalCallFunction(func: Value, args: Value[]): Value {
-  if (!isFunctionValue(func)) {
-    return Error(`not a function: ${func.type()}`)
+  if (isFunctionValue(func)) {
+    const extendEnv = extendFunctionEnv(func, args)
+    const evaluated = evaluate(func.body, extendEnv)
+    return unwrapReturnValue(evaluated)
   }
 
-  const extendEnv = extendFunctionEnv(func, args)
-  const evaluated = evaluate(func.body, extendEnv)
+  if (isBuiltinValue(func)) {
+    return func.fn(args)
+  }
 
-  return unwrapReturnValue(evaluated)
+  return Error(`not a function: ${func.type()}`)
 }
 
 function extendFunctionEnv(func: FunctionValue, args: Value[]): EnvireonmentObject {

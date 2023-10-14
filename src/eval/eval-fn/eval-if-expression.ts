@@ -1,5 +1,5 @@
 import { evaluate } from '..'
-import { NULL } from '../../constants'
+import { NULL } from '../constants'
 import { IFExpression } from '../../parser/types'
 import { EnvireonmentObject, Value, isBooleanValue, isErrorValue, isNullValue } from '../types'
 

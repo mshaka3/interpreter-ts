@@ -1,4 +1,4 @@
-import { Token } from '../../types'
+import { Token } from '../../lexer/types'
 import {
   Identifier,
   IntegerLiteral,
@@ -9,7 +9,8 @@ import {
   BlockStatment,
   IFExpression,
   FunctionLiteral,
-  CallExperssion
+  CallExperssion,
+  StringLiteral
 } from '../types'
 
 export function identifier(token: Token, value: string): Identifier {
@@ -28,6 +29,17 @@ export function identifier(token: Token, value: string): Identifier {
     print,
     value
   }
+}
+
+export function stringLiteral(token: Token, value: string): StringLiteral {
+  function tokenLiteral(): string {
+    return token.literal
+  }
+
+  function print(): string {
+    return token.literal
+  }
+  return { type: 'STRING_LITERAL', token, print, tokenLiteral, value }
 }
 
 export function integerLiteral(token: Token, value: bigint): IntegerLiteral {
