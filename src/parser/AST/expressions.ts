@@ -10,7 +10,9 @@ import {
   IFExpression,
   FunctionLiteral,
   CallExperssion,
-  StringLiteral
+  StringLiteral,
+  ArrayLiteral,
+  IndexExpression
 } from '../types'
 
 export function identifier(token: Token, value: string): Identifier {
@@ -58,6 +60,30 @@ export function integerLiteral(token: Token, value: bigint): IntegerLiteral {
     value,
     print
   }
+}
+export function arrayLiteral(token: Token, elements: Expression[]): ArrayLiteral {
+  function tokenLiteral(): string {
+    return token.literal
+  }
+
+  function print() {
+    const elem = elements.map((elm) => elm.print()).join(', ')
+    return '[' + elem + ']'
+  }
+
+  return { type: 'ARRAY_LITERAL', token, tokenLiteral, print, elements }
+}
+
+export function indexExpression(token: Token, left: Expression, index: Expression): IndexExpression {
+  function tokenLiteral(): string {
+    return token.literal
+  }
+
+  function print() {
+    return '(' + left.print() + '[' + index.print() + '])'
+  }
+
+  return { type: 'INDEX_EXPRESSION', token, tokenLiteral, print, left, index }
 }
 
 export function prefixExpression({

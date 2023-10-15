@@ -11,8 +11,8 @@ export function skipWhiteSpace(char: string): boolean {
 export function readLetter(char: string): boolean {
   const charCode = char.charCodeAt(0)
   return (
-    ('a'.charCodeAt(0) < charCode && 'z'.charCodeAt(0) >= charCode) ||
-    ('A'.charCodeAt(0) <= charCode && 'z'.charCodeAt(0) >= charCode) ||
+    (charCode >= 'a'.charCodeAt(0) && charCode <= 'z'.charCodeAt(0)) ||
+    ('A'.charCodeAt(0) <= charCode && 'Z'.charCodeAt(0) >= charCode) ||
     charCode === '_'.charCodeAt(0)
   )
 }

@@ -8,6 +8,7 @@ export type ValueType =
   | 'NULL'
   | 'ERROR_VALUE'
   | 'FUNCTION_VALUE'
+  | 'ARRAY'
   | 'BUILTIN_VALUE'
 
 export interface Value {
@@ -25,6 +26,10 @@ export interface BooleanValue extends Value {
 
 export interface StringValue extends Value {
   value: string
+}
+
+export interface ArrayValue extends Value {
+  elements: Value[]
 }
 
 export interface NullValue extends Value {}
@@ -55,7 +60,16 @@ export interface EnvireonmentObject {
 }
 
 export type BuiltinFunction = (args: Value[]) => Value
-export type MonkeyValue = IntegerValue | BooleanValue | ReturnValue | NullValue | ErrorValue
+export type MonkeyValue =
+  | IntegerValue
+  | BooleanValue
+  | StringValue
+  | ReturnValue
+  | NullValue
+  | ErrorValue
+  | FunctionValue
+  | BuiltinValue
+  | ArrayValue
 
 // TYPE GUARDS
 
@@ -81,6 +95,10 @@ export function isNullValue(value: Value): value is NullValue {
 
 export function isErrorValue(value: Value): value is ErrorValue {
   return value.type() == 'ERROR_VALUE'
+}
+
+export function isArrayValue(value: Value): value is ArrayValue {
+  return value.type() == 'ARRAY'
 }
 
 export function isFunctionValue(value: Value): value is FunctionValue {

@@ -18,6 +18,8 @@ export const MAP_TOKWN_TYPE_LETIERAL: { [key in string]: TokenType } = {
   '}': 'RBRACE',
   '(': 'LPAREN',
   ')': 'RPAREN',
+  '[': 'LBRACKET',
+  ']': 'RBRACKET',
 
   IDENT: 'IDENT',
   ILLEGAL: 'ILLEGAL',
@@ -44,5 +46,6 @@ export const MAP_TOKEN_TYPE_TO_PRECEDENCE: Partial<Record<TokenType, OperatorPre
   MINUS: OperatorPrecedence.SUM,
   SLASH: OperatorPrecedence.PRODUCT,
   ASTERISK: OperatorPrecedence.PRODUCT,
-  LPAREN: OperatorPrecedence.CALL
+  LPAREN: OperatorPrecedence.CALL,
+  LBRACKET: OperatorPrecedence.INDEX
 }

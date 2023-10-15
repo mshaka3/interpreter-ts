@@ -7,7 +7,8 @@ export enum OperatorPrecedence {
   SUM,
   PRODUCT,
   PREFIX,
-  CALL
+  CALL,
+  INDEX
 }
 
 export interface Parser {
@@ -26,6 +27,8 @@ export type NodeType =
   | 'STRING_LITERAL'
   | 'INTEGER_LITERAL'
   | 'BOOLEAN_LITERAL'
+  | 'ARRAY_LITERAL'
+  | 'INDEX_EXPRESSION'
   | 'PREFIX_EXPRESSION'
   | 'INFIX_EXPRESSION'
   | 'IF_EXPRESSION'
@@ -43,11 +46,13 @@ export interface Node {
 export type Statement = LetStatement | ReturnStatement | ExpressionStatement | BlockStatment
 export type Expression =
   | Identifier
-  | IntegerLiteral
   | PrefixExpression
   | InfixExpression
+  | IntegerLiteral
   | StringLiteral
   | BooleanLiteral
+  | ArrayLiteral
+  | IndexExpression
   | IFExpression
   | FunctionLiteral
   | CallExperssion
@@ -86,6 +91,15 @@ export interface IntegerLiteral extends Node {
 }
 export interface BooleanLiteral extends Node {
   value: boolean
+}
+
+export interface ArrayLiteral extends Node {
+  elements: Expression[]
+}
+
+export interface IndexExpression extends Node {
+  left: Expression
+  index: Expression
 }
 
 export interface FunctionLiteral extends Node {
@@ -162,6 +176,8 @@ export function isExpression(value: Node): value is Expression {
     value.type == 'STRING_LITERAL' ||
     value.type == 'INTEGER_LITERAL' ||
     value.type == 'BOOLEAN_LITERAL' ||
+    value.type == 'ARRAY_LITERAL' ||
+    value.type == 'INDEX_EXPRESSION' ||
     value.type == 'IDENTIFIER' ||
     value.type == 'IF_EXPRESSION' ||
     value.type == 'FUNCTION_LITERAL' ||
@@ -187,6 +203,14 @@ export function isIntegerLiteral(value: Expression): value is IntegerLiteral {
 
 export function isBooleanLiteral(value: Expression): value is BooleanLiteral {
   return value.type == 'BOOLEAN_LITERAL'
+}
+
+export function isArrayLiteral(value: Expression): value is ArrayLiteral {
+  return value.type == 'ARRAY_LITERAL'
+}
+
+export function isIndexExpression(value: Expression): value is IndexExpression {
+  return value.type == 'INDEX_EXPRESSION'
 }
 
 export function isIdentifier(value: Expression): value is Identifier {

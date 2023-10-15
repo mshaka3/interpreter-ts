@@ -1,6 +1,7 @@
 import { NULL } from './constants'
 import {
   Node,
+  isArrayLiteral,
   isBlockStatment,
   isBooleanLiteral,
   isCallExperssion,
@@ -9,6 +10,7 @@ import {
   isFunctionLiteral,
   isIFExpression,
   isIdentifier,
+  isIndexExpression,
   isInfixExpression,
   isIntegerLiteral,
   isLetStatement,
@@ -28,11 +30,13 @@ import { evalInfixExpression } from './eval-fn/eval-infix-expression'
 import { evalPrefixExpression } from './eval-fn/eval-prefix-expression'
 import { evalProgram } from './eval-fn/eval-program'
 
-import { EnvireonmentObject, Value, isErrorValue } from './types'
+import { EnvireonmentObject, Value, isArrayValue, isErrorValue } from './types'
 import { Function } from './values/function'
 import { Integer } from './values/integer'
 import { ReturnValue } from './values/return-value'
 import { String } from './values/string-value'
+import { ArrayVal } from './values/array'
+import { evalIndexExpression } from './eval-fn/eval-index-expression'
 
 export function evaluate(node: Node, env: EnvireonmentObject): Value {
   if (isProgram(node)) {
@@ -132,6 +136,28 @@ export function evaluate(node: Node, env: EnvireonmentObject): Value {
       }
 
       return evalCallFunction(functionValue, args)
+    }
+
+    if (isArrayLiteral(node)) {
+      const elements = evalExpressions(node.elements, env)
+      if (elements.length == 1 && isErrorValue(elements[0])) {
+        return elements[0]
+      }
+
+      return ArrayVal(elements)
+    }
+    if (isIndexExpression(node)) {
+      const left = evaluate(node.left, env)
+      if (isErrorValue(left)) {
+        return left
+      }
+
+      const index = evaluate(node.index, env)
+      if (isErrorValue(index)) {
+        return index
+      }
+
+      return evalIndexExpression(left, index)
     }
   }
 

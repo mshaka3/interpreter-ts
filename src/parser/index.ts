@@ -3,11 +3,13 @@ import { Lexer, Token, TokenType } from '../lexer/types'
 
 import { program } from './AST'
 import {
+  arrayLiteral,
   booleanLiteral,
   callExperssion,
   functionLiteral,
   identifier,
   ifExpression,
+  indexExpression,
   infixExpression,
   integerLiteral,
   prefixExpression,
@@ -49,6 +51,7 @@ export function parser(lexer: Lexer): Parser {
   registerPrefix('IDENT', parseIdentifier)
   registerPrefix('INT', parseIntegerLiteral)
   registerPrefix('STRING', parseStringLiteral)
+  registerPrefix('LBRACKET', parseArrayLiteral)
 
   registerPrefix('MINUS', parsePrefixExpression)
   registerPrefix('BANG', parsePrefixExpression)
@@ -70,6 +73,7 @@ export function parser(lexer: Lexer): Parser {
   registerInfix('NEQ', parseInfixExpression)
   registerInfix('LT', parseInfixExpression)
   registerInfix('GT', parseInfixExpression)
+  registerInfix('LBRACKET', parseIndexExpression)
 
   registerInfix('LPAREN', parseCallExpression)
 
@@ -218,6 +222,18 @@ export function parser(lexer: Lexer): Parser {
     return functionLiteral(token, parameters, body)
   }
 
+  function parseIndexExpression(left: Expression): Expression | null {
+    const token = currToken
+    nextToken()
+
+    const index = parseExpression(OperatorPrecedence.LOWEST)
+    if (!index || !expectPeek('RBRACKET')) {
+      return null
+    }
+
+    return indexExpression(token, left, index)
+  }
+
   function parseFucntionParameters(): Identifier[] | null {
     if (peekTokenIs('RPAREN')) {
       nextToken()
@@ -256,7 +272,7 @@ export function parser(lexer: Lexer): Parser {
 
   function parseCallExpression(func: Expression): Expression | null {
     const token = currToken
-    const args = parseCallArguments()
+    const args = parseExpressionList('RPAREN')
 
     if (!args) {
       return null
@@ -265,8 +281,8 @@ export function parser(lexer: Lexer): Parser {
     return callExperssion(token, func, args)
   }
 
-  function parseCallArguments(): Expression[] | null {
-    if (peekTokenIs('RPAREN')) {
+  function parseExpressionList(end: TokenType): Expression[] | null {
+    if (peekTokenIs(end)) {
       nextToken()
       return []
     }
@@ -288,7 +304,7 @@ export function parser(lexer: Lexer): Parser {
       args.push(exp)
     }
 
-    if (!expectPeek('RPAREN')) {
+    if (!expectPeek(end)) {
       return null
     }
 
@@ -353,6 +369,16 @@ export function parser(lexer: Lexer): Parser {
       errors.push(`could not parse ${currToken.literal} as BigInt`)
       return null
     }
+  }
+
+  function parseArrayLiteral(): Expression | null {
+    const token = currToken
+    const elements = parseExpressionList('RBRACKET')
+
+    if (!elements) {
+      return null
+    }
+    return arrayLiteral(token, elements)
   }
 
   function parsePrefixExpression(): PrefixExpression | null {

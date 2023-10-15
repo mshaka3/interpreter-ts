@@ -18,12 +18,15 @@ export type TokenType =
   | 'SLASH'
   | 'LT'
   | 'GT'
+  //
   | 'COMMA'
   | 'SEMICOLON'
   | 'LPAREN'
   | 'RPAREN'
   | 'LBRACE'
   | 'RBRACE'
+  | 'LBRACKET'
+  | 'RBRACKET'
 
   // Keywords
   | 'FUNCTION'
